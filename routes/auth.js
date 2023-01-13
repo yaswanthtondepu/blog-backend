@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var dbobject = require("../connection");
+var dbobject = require("./connection");
 /* GET home page. */
 router.post("/signup", function (req, res, next) {
   console.log(req.body.newUser);
@@ -56,7 +56,7 @@ router.post("/signup", function (req, res, next) {
   }
 });
 
-router.get("/signIn", function (req, res, next) {
+router.get("/signin", function (req, res, next) {
   res.json({ tondepu: "yash" });
 });
 
