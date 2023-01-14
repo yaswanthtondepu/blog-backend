@@ -56,8 +56,64 @@ router.post("/signup", function (req, res, next) {
   }
 });
 
-router.get("/signin", function (req, res, next) {
-  res.json({ tondepu: "yash" });
+router.post("/signin", function (req, res, next) {
+  const { email,password } = req.body.User;
+  console.log(email,password);
+  try {
+  connection = dbobject();
+  connection.connect();
+  console.log("connected")
+  
+    connection.query(
+      `SELECT email FROM User WHERE email="${email}"`,
+      (err, rows, fields) => {
+        if (err) throw err;
+        else if (rows.length !== 0) {
+          connection.query(
+            `SELECT password FROM User WHERE email="${email}"`,
+            (err, rows, fields) => {
+              if (err) throw err;
+              else if (rows.length !== 0) {
+                if (rows[0].password === password) {
+                  connection.query( `SELECT username, email,firstname,lastname FROM User WHERE email="${email}"`,(err, rows, fields) => {
+                    if (err) throw err;
+                    else {
+                      res.json({
+                        msg: "user logged in successfully",
+                        user: rows[0],
+                      });
+                      connection.end();
+                    }
+                  });
+                } else {
+                  res.json({
+                    error: { code: 2, errormsg: "password is incorrect" },
+                  });
+                  connection.end();
+                }
+              } else {
+                res.json({
+                  error: { code: 3, errormsg: "internal error occured" },
+                });
+                connection.end();
+              }
+            }
+          );
+        } else {
+          res.json({
+            error: { code: 1, errormsg: "email is not registered" },
+          });
+          connection.end();
+        }
+      }
+    );
+  } 
+  catch (error) {
+    console.log(error);
+    res.json({
+      error: { code: 3, errormsg: "internal error occured" },
+    });
+  }
 });
 
 module.exports = router;
