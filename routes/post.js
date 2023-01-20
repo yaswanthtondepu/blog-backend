@@ -43,7 +43,7 @@ router.get("/getallposts", function (req, res, next) {
   try {
     
     connection.query(
-      "select  p.id as postId,p.title,p.author_id,p.tags,p.updated_at, u.id as userId,u.username, (select count(*) from Reaction r where r.post_id = p.id) as reactionCount,  \
+      "select  p.id as postId,p.title,p.author_id,p.tags,p.updated_at, u.id as userId,u.username,u.firstname, u.lastname, (select count(*) from Reaction r where r.post_id = p.id) as reactionCount,  \
 (select count(*) from Comment c where c.post_id = p.id) as commentCount \
  from Post p join User u on p.author_id = u.id where p.isPublished = 1;",
 
@@ -71,7 +71,7 @@ router.post("/getpostbyid", function (req, res, next) {
     connection.connect();
 
     connection.query(
-      `select * from Post where id = ${id}`,
+      `select p.id as postId,p.title,p.author_id,p.tags,p.updated_at, p.contenttext,u.username as author_name, u.firstname, u.lastname from Post p join User u on p.author_id = u.id where p.id = ${id}`,
       (err, rows, fields) => {
         if (err) throw err;
         else {
@@ -97,7 +97,7 @@ router.post("/getpostbyuserid", function (req, res, next) {
     connection.connect();
     
     connection.query(
-      `select * from Post where author_id = ${id}`,
+      `select p.id as postId,p.title,p.author_id,p.tags,p.updated_at, u.firstname, u.lastname from Post p join User u on p.author_id = u.id where author_id = ${id}`,
       (err, rows, fields) => {
         if (err) throw err;
         else {
@@ -146,22 +146,36 @@ router.post("/getallpostsofUser", function (req, res, next) {
 });
 router.post("/deletepostbyid", function (req, res, next) {
   const connection = dbobject();
-  const { id } = req.body.post;
+  const { id, userId } = req.body.post;
   connection.connect();
   try {
-    connection.query(
-      `DELETE from Post where id = ${id}`,
-      (err, rows, fields) => {
-        if (err) throw err;
-        else {
-          console.log(rows);
-          res.json({
-            msg: "Post deleted successfully",
-          });
-          connection.end();
-        }
+    connection.query(`select * from Post where id = ${id} and author_id = ${userId}`, (err, rows, fields) => {
+      if (err) throw err;
+      else if (rows.length == 0) {
+        res.json({
+          code: 1,
+          err: "Post not found",
+        });
+        connection.end();
       }
-    );
+      else{
+        connection.query(
+          `DELETE from Post where id = ${id}`,
+          (err, rows, fields) => {
+            if (err) throw err;
+            else {
+              console.log(rows);
+              res.json({
+                msg: "Post deleted successfully",
+              });
+              connection.end();
+            }
+          }
+        );
+      }
+    })
+    
+   
   } catch (error) {
     res.json({
       code: 1,
@@ -184,22 +198,19 @@ router.post("/updatepostbyid", function (req, res, next) {
         if (err) throw err;
         else {
           if (rows[0].authorId === authorId) {
+            connection.query(
+              `UPDATE Post set title = "${title}" , content = "${content}", updated_at = "${dateTime}" where id = "${postId}"`,
+              (err, rows, fields) => {
+                if (err) throw err;
+                else {
+                  res.json({
+                    msg: " Post updated successfully",
+                  });
+                  connection.end();
+                }
+              }
+            );
           }
-        }
-      }
-    );
-    // move this to if block above :) and complete the rest. hehe :)
-    // complete this ra yashu
-    // byeee. See you Thursday
-    connection.query(
-      `UPDATE Post set title = "${title}" , content = "${content}", updated_at = "${dateTime}" where id = "${postId}"`,
-      (err, rows, fields) => {
-        if (err) throw err;
-        else {
-          res.json({
-            msg: " Post updated successfully",
-          });
-          connection.end();
         }
       }
     );
