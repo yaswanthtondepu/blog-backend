@@ -13,7 +13,9 @@ router.post("/createpost", function (req, res, next) {
   try {
     connection.query(
       `INSERT INTO Post (title,content,contenttext,author_id,created_at,updated_at,isPublished)` +
-        `VALUES ("${title}", "${content}", "${contentText}", "${authorId}","${dateTime}","${dateTime}", "${status}");`,
+        `VALUES ("${title}", ${connection.escape(content)}, ${connection.escape(
+          contentText
+        )}, "${authorId}","${dateTime}","${dateTime}", "${status}");`,
       (err, rows, fields) => {
         if (err) throw err;
         else {
@@ -39,6 +41,7 @@ router.get("/getallposts", function (req, res, next) {
   const connection = dbobject();
   connection.connect();
   try {
+    
     connection.query(
       "select  p.id as postId,p.title,p.author_id,p.tags,p.updated_at, u.id as userId,u.username, (select count(*) from Reaction r where r.post_id = p.id) as reactionCount,  \
 (select count(*) from Comment c where c.post_id = p.id) as commentCount \
@@ -86,6 +89,36 @@ router.post("/getpostbyid", function (req, res, next) {
     connection.end();
   }
 });
+
+router.post("/getpostbyuserid", function (req, res, next) {
+  try {
+    const connection = dbobject();
+    const { id } = req.body.author;
+    connection.connect();
+    
+    connection.query(
+      `select * from Post where author_id = ${id}`,
+      (err, rows, fields) => {
+        if (err) throw err;
+        else {
+          console.log(rows);
+          res.json(rows);
+          connection.end();
+        }
+      }
+    );
+  
+  }
+    catch (error){
+      console.log(error)
+      res.json({
+        code: 1,
+        err: "something error occured",
+      });
+      connection.end();
+    }
+});
+
 router.post("/getallpostsofUser", function (req, res, next) {
   try {
     const { userId } = req.body.User;
@@ -100,7 +133,6 @@ router.post("/getallpostsofUser", function (req, res, next) {
           console.log(rows);
           res.json(rows);
           connection.end();
-          
         }
       }
     );
