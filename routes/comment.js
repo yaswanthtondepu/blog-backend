@@ -102,4 +102,33 @@ router.post("/deletecommentbyid", function (req, res, next) {
     }
 });
 
+
+router.post("/editComment", function (req, res, next) {
+    try {
+        const connection = dbobject();
+        const { id,content } = req.body.editComment;
+        connection.connect();
+        const dateTime = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+        connection.query(
+            `UPDATE Comment SET content = ${connection.escape(content)}, updated_at = "${dateTime}"  where id = ${id}`,
+            (err, rows, fields) => {
+                if (err) throw err;
+                else {
+                    res.json({
+                        msg: " Comment edited successfully",
+                    });
+                    connection.end();
+                }
+            }
+        );
+    } catch (error) {
+        res.json({
+            code: 1,
+            err: "something error occured",
+        });
+        connection.end();
+    }
+});
+
 module.exports = router;
