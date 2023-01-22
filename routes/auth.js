@@ -9,6 +9,7 @@ var salt = bcrypt.genSaltSync(10);
 router.post("/signup", function (req, res, next) {
   console.log(req.body.newUser);
   const { userName, password, firstName, lastName, email } = req.body.newUser;
+  const dateTime = new Date().toISOString().slice(0, 19).replace("T", " ");
   connection = dbobject();
   connection.connect();
   try {
@@ -35,8 +36,8 @@ router.post("/signup", function (req, res, next) {
               } else {
                 const hashed_password = bcrypt.hashSync(password, salt);
                 connection.query(
-                  `INSERT INTO User (username,firstname,lastname,password,email)` +
-                    `VALUES ("${userName}", "${firstName}", "${lastName}","${hashed_password}", "${email}");`,
+                  `INSERT INTO User (username,firstname,lastname,password,email,joined)` +
+                  `VALUES ("${userName}", "${firstName}", "${lastName}","${hashed_password}", "${email}", "${dateTime}");`,
                   (err, rows, fields) => {
                     if (err) throw err;
                     else {

@@ -45,7 +45,7 @@ router.get("/getallposts", function (req, res, next) {
     connection.query(
       "select  p.id as postId,p.title,p.author_id,p.tags,p.updated_at, u.id as userId,u.username,u.firstname, u.lastname, (select count(*) from Reaction r where r.post_id = p.id) as reactionCount,  \
 (select count(*) from Comment c where c.post_id = p.id) as commentCount \
- from Post p join User u on p.author_id = u.id where p.isPublished = 1;",
+ from Post p join User u on p.author_id = u.id where p.isPublished = 1 order by p.updated_at DESC;",
 
       (err, rows, fields) => {
         if (err) throw err;
