@@ -9,7 +9,27 @@ const bcrypt = require("bcryptjs");
 var salt = bcrypt.genSaltSync(10);
 
 
-router.get("/login/federated/google", passport.authenticate("google"));
+router.get("/google",(req, res, next)=>{
+  // console.log(req)
+  next()
+},
+ passport.authenticate("google"));
+
+
+
+passport.serializeUser(function (user, cb) {
+  process.nextTick(function () {
+    console.log("serial running",user)
+    cb(null, { id: user.id, username: user.username, name: user.name });
+  });
+});
+
+passport.deserializeUser(function (user, cb) {
+  process.nextTick(function () {
+    return cb(null, user);
+  });
+}); 
+
 
 
 passport.use(
@@ -17,11 +37,11 @@ passport.use(
     {
       clientID: process.env["GOOGLE_CLIENT_ID"],
       clientSecret: process.env["GOOGLE_CLIENT_SECRET"],
-      callbackURL: "/oauth2/redirect/google",
+      callbackURL: "auth/oauth2/redirect/google",
       scope: ["profile"],
     },
     function verify(issuer, profile, cb) {
-      console.log(profile)
+      console.log(issuer,profile,cb)
       const db = dbobject();
       db.get(
         "SELECT * FROM federated_credentials WHERE provider = ? AND subject = ?",
@@ -77,27 +97,19 @@ passport.use(
   )
 );
 
-passport.serializeUser(function (user, cb) {
-  process.nextTick(function () {
-    cb(null, { id: user.id, username: user.username, name: user.name });
-  });
-});
 
-passport.deserializeUser(function (user, cb) {
-  process.nextTick(function () {
-    return cb(null, user);
-  });
-}); 
+
 
 router.get(
-  "/oauth2/redirect/google",
+  "/oauth2/redirect/google",(req,res,next)=>{
+    console.log(req.body)
+    next()
+  },
   passport.authenticate("google", {
     successRedirect: "/",
     failureRedirect: "/login",
   })
 );
-
-
 
 
 
