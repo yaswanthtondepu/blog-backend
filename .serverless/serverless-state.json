@@ -174,7 +174,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/sample-app/dev/1674260102777-2023-01-21T00:15:02.777Z/sample-app.zip"
+                "S3Key": "serverless/sample-app/dev/1674347040157-2023-01-22T00:24:00.157Z/sample-app.zip"
               },
               "Handler": "app/app.handler",
               "Runtime": "nodejs16.x",
@@ -192,14 +192,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersion2ZVeMTp5QgZMQ0kBTHRY8AeN1VFF5ofjBhmjryqI4": {
+          "AppLambdaVersionCzR1olmVRBEqgdUTB99afDOhpgsP0KQtgRo4qXu4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "DMJjEV0nQzQG+ol2zvo7hocR9edRNz/5R8qaRjYZays="
+              "CodeSha256": "JX5ObpRNZ5aNZv+KgJ61c3IwqkS8EvB/Yz6+1tPqEEM="
             }
           },
           "ApiGatewayRestApi": {
@@ -417,7 +417,7 @@
               "AppLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1674260100207": {
+          "ApiGatewayDeployment1674347037591": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -482,7 +482,7 @@
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersion2ZVeMTp5QgZMQ0kBTHRY8AeN1VFF5ofjBhmjryqI4"
+              "Ref": "AppLambdaVersionCzR1olmVRBEqgdUTB99afDOhpgsP0KQtgRo4qXu4"
             },
             "Export": {
               "Name": "sls-sample-app-dev-AppLambdaFunctionQualifiedArn"
@@ -660,7 +660,7 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersion2ZVeMTp5QgZMQ0kBTHRY8AeN1VFF5ofjBhmjryqI4"
+        "versionLogicalId": "AppLambdaVersionCzR1olmVRBEqgdUTB99afDOhpgsP0KQtgRo4qXu4"
       }
     },
     "configValidationMode": "warn",
@@ -679,7 +679,7 @@
     "artifact": "/Users/yash1744/personal projects/blog-backend/.serverless/sample-app.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/sample-app/dev/1674260102777-2023-01-21T00:15:02.777Z",
+    "artifactDirectoryName": "serverless/sample-app/dev/1674347040157-2023-01-22T00:24:00.157Z",
     "artifact": "sample-app.zip"
   }
 }

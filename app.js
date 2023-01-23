@@ -10,20 +10,41 @@ var authRouter = require("./routes/auth");
 var postRouter = require("./routes/post");
 var commentRouter = require("./routes/comment");
 var userRouter = require("./routes/user");
-const { application } = require("express");
 
+
+
+var session = require("express-session");
+var passport = require("passport");
+var MySQLStore = require('connect-mysql')(session);
+var mysqloptions = {
+      config: {
+       host: "blog.ccsxo0vdgqdw.us-east-1.rds.amazonaws.com",
+      user: "admin",
+      password: "Aa12345678,.",
+      database: "blog"
+      }
+    }
 
 var app = express();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
-
+app.set("view engine", "jade"); 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: false,
+    store: new MySQLStore(mysqloptions)
+  })
+);
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(passport.authenticate("session"));
 app.use(cors());
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
