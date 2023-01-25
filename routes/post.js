@@ -98,7 +98,8 @@ router.post("/getpostbyuserid", function (req, res, next) {
     connection.connect();
     
     connection.query(
-      `select p.id as postId,p.title,p.author_id,p.tags,p.updated_at,p.isPublished, u.firstname, u.lastname from Post p join User u on p.author_id = u.id where author_id = ${id}`,
+      `select p.id as postId,p.title,p.author_id,p.tags,p.updated_at,p.isPublished, u.firstname, u.lastname, 
+      (select count(*) from Comment c where c.post_id = p.id) as commentCount, (select count(*) from Reaction r where r.post_id = p.id) as reactionCount from Post p join User u on p.author_id = u.id where author_id = ${id}`,
       (err, rows, fields) => {
         if (err) throw err;
         else {

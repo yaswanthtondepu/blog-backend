@@ -10,7 +10,7 @@ router.post("/getuserbookmarks", function (req, res, next) {
         connection.connect();
 
         connection.query(
-            `select b.postId, p.*, u.firstname, u.lastname from Bookmark b join Post p on b.postId = p.id join User u on u.id = p.author_id and b.userId = ${userId}`,
+            `select b.postId, p.*, u.firstname, u.lastname, (select count(*) from Comment c where c.post_id = p.id) as commentCount, (select count(*) from Reaction r where r.post_id = p.id) as reactionCount from Bookmark b join Post p on b.postId = p.id join User u on u.id = p.author_id and b.userId = ${userId}`,
             (err, rows, fields) => {
                 if (err) throw err;
                 else {
