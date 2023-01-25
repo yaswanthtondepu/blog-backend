@@ -10,6 +10,7 @@ var authRouter = require("./routes/auth");
 var postRouter = require("./routes/post");
 var commentRouter = require("./routes/comment");
 var userRouter = require("./routes/user");
+var bookMarkRouter = require("./routes/bookmark");
 
 
 
@@ -51,6 +52,7 @@ app.use("/auth", authRouter);
 app.use("/post", postRouter);
 app.use("/comment", commentRouter);
 app.use("/user", userRouter);
+app.use("/bookmark", bookMarkRouter);
 
 
 // catch 404 and forward to error handler

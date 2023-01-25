@@ -67,11 +67,12 @@ router.get("/getallposts", function (req, res, next) {
 router.post("/getpostbyid", function (req, res, next) {
   try {
     const connection = dbobject();
-    const { id } = req.body.post;
+    const { id,userId } = req.body.post;
     connection.connect();
 
     connection.query(
-      `select p.id as postId,p.title,p.author_id,p.tags,p.updated_at, p.contenttext,u.username as author_name, u.firstname, u.lastname from Post p join User u on p.author_id = u.id where p.id = ${id}`,
+      `select p.id as postId,p.title,p.author_id,p.tags,p.updated_at, p.contenttext,u.username as author_name, u.firstname, u.lastname,
+      (select count(*) from Bookmark where userId = ${userId} and postId = ${id}) as isBookmarked from Post p join User u on p.author_id = u.id where p.id = ${id}`,
       (err, rows, fields) => {
         if (err) throw err;
         else {
